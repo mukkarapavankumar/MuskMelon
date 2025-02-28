@@ -235,7 +235,7 @@ class DashboardWidget(QWidget):
                     border-radius: 4px;
                 }
             """)
-            edit_btn.clicked.connect(lambda _, tid=task.get("id"): self.navigate_callback("task_config", tid))
+            edit_btn.clicked.connect(lambda checked=False, t=task.get("id"): self.navigate_callback("task_config", t))
             actions_layout.addWidget(edit_btn)
             
             # Delete button
@@ -255,7 +255,7 @@ class DashboardWidget(QWidget):
                     border-radius: 4px;
                 }
             """)
-            delete_btn.clicked.connect(lambda _, tid=task.get("id"): self._delete_task(tid))
+            delete_btn.clicked.connect(lambda checked=False, t=task.get("id"): self._delete_task(t))
             actions_layout.addWidget(delete_btn)
             
             self.tasks_table.setCellWidget(i, 4, actions_widget)
