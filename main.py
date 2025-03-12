@@ -12,6 +12,7 @@ from ui.dashboard import DashboardWidget
 from ui.task_config import TaskConfigWidget
 from ui.settings import SettingsWidget
 from ui.logs import LogsWidget
+from ui.results import ResultsWidget
 from core.task_manager import TaskManager
 from core.logger import setup_logger
 
@@ -20,6 +21,11 @@ load_dotenv()
 
 # Setup logging
 logger = setup_logger()
+
+def resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -39,12 +45,14 @@ class MainWindow(QMainWindow):
         self.task_config = TaskConfigWidget(self.task_manager, self.navigate_to)
         self.settings = SettingsWidget(self.navigate_to)
         self.logs = LogsWidget(self.navigate_to)
+        self.results = ResultsWidget(self.task_manager, self.navigate_to)
         
         # Add widgets to stacked widget
         self.stacked_widget.addWidget(self.dashboard)
         self.stacked_widget.addWidget(self.task_config)
         self.stacked_widget.addWidget(self.settings)
         self.stacked_widget.addWidget(self.logs)
+        self.stacked_widget.addWidget(self.results)
         
         # Set central widget
         self.setCentralWidget(self.stacked_widget)
@@ -127,14 +135,14 @@ class MainWindow(QMainWindow):
         else:
             event.accept()
     
-    def navigate_to(self, screen, task_id=None):
+    def navigate_to(self, screen, data=None):
         """Navigate to a specific screen"""
         if screen == "dashboard":
             self.dashboard.refresh_data()
             self.stacked_widget.setCurrentWidget(self.dashboard)
         elif screen == "task_config":
-            if task_id:
-                self.task_config.load_task(task_id)
+            if data:  # task_id
+                self.task_config.load_task(data)
             else:
                 self.task_config.clear_form()
             self.stacked_widget.setCurrentWidget(self.task_config)
@@ -143,6 +151,10 @@ class MainWindow(QMainWindow):
         elif screen == "logs":
             self.logs.refresh_logs()
             self.stacked_widget.setCurrentWidget(self.logs)
+        elif screen == "results":
+            if data:  # task data
+                self.results.load_results(data)
+                self.stacked_widget.setCurrentWidget(self.results)
     
     def check_tasks(self):
         """Check for tasks that need to be executed"""
@@ -159,8 +171,12 @@ if __name__ == "__main__":
     app.setStyle("Fusion")
     
     # Load stylesheet
-    with open("ui/styles/style.qss", "r") as f:
-        app.setStyleSheet(f.read())
+    try:
+        style_path = resource_path('ui/styles/style.qss')
+        with open(style_path, "r") as f:
+            app.setStyleSheet(f.read())
+    except Exception as e:
+        logger.error(f"Failed to load stylesheet: {e}")
     
     window = MainWindow()
     window.show()

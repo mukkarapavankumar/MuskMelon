@@ -6,6 +6,8 @@ __pycache__/
 .Python
 env/
 build/
+OutlookEmailAutomation.spec
+app.spec
 develop-eggs/
 dist/
 downloads/
@@ -38,6 +40,7 @@ logs/
 venv
 data
 logs
+build
 
 Thumbs.db
 ehthumbs.db

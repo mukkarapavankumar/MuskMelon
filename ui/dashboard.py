@@ -218,6 +218,26 @@ class DashboardWidget(QWidget):
             run_btn.clicked.connect(lambda checked=False, t=task.get("id"): self._run_task_now(t))
             actions_layout.addWidget(run_btn)
             
+            # View Results button
+            results_btn = QPushButton()
+            results_btn.setIcon(QIcon(self.style().standardPixmap(QStyle.SP_FileDialogContentsView)))
+            results_btn.setIconSize(QSize(12, 12))
+            results_btn.setFixedSize(16, 16)
+            results_btn.setToolTip("View Results")
+            results_btn.setStyleSheet("""
+                QPushButton {
+                    background-color: transparent;
+                    border: none;
+                    padding: 2px;
+                }
+                QPushButton:hover {
+                    background-color: #dbeafe;
+                    border-radius: 4px;
+                }
+            """)
+            results_btn.clicked.connect(lambda checked=False, t=task: self.navigate_callback("results", t))
+            actions_layout.addWidget(results_btn)
+            
             # Edit button
             edit_btn = QPushButton()
             edit_btn.setIcon(QIcon(self.style().standardPixmap(QStyle.SP_FileIcon)))

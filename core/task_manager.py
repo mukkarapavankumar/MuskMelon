@@ -248,7 +248,6 @@ class TaskManager:
             summary = self.ai_summarizer.summarize(responses, ai_prompt)
             
             # Store summary
-            storage_type = task.get("storage_type", "csv")
             storage_path = task.get("storage_path", f"data/summaries/{task['id']}")
             
             # Ensure directory exists
@@ -257,7 +256,6 @@ class TaskManager:
             self.storage_handler.store_summary(
                 summary,
                 responses,
-                storage_type,
                 storage_path,
                 task["name"]
             )
